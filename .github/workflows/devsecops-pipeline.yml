@@ -1,0 +1,27 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  hello-world:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Repository
+        run: |
+          echo "🚀 GitHub Actions is working!"
+          pwd
+          ls -la
+
+      - name: Check Node Version
+        run: node --version
+
+      - name: Check npm Version
+        run: npm --version
