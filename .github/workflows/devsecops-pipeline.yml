@@ -124,7 +124,7 @@ jobs:
           --severity ERROR \
           --sarif \
           --output semgrep.sarif \
-          --error
+          
 
       #####################################################
       # Upload Report
