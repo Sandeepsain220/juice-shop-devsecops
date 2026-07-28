@@ -1,0 +1,9 @@
+# Ignore unfixed CVEs that currently have no vendor patch
+
+# Example
+
+CVE-2023-38545
+
+# Example
+
+CVE-2023-44487

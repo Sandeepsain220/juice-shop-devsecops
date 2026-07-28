@@ -1,0 +1,114 @@
+rules:
+
+###############################################################
+# Rule 1 - Detect eval() and Dynamic Code Execution
+###############################################################
+
+- id: javascript-eval-detection
+
+  message: >
+    Avoid using eval() or dynamic code execution.
+    It can lead to Remote Code Execution (RCE).
+
+  severity: ERROR
+
+  languages:
+    - javascript
+    - typescript
+
+  metadata:
+    category: security
+    technology:
+      - nodejs
+      - express
+    confidence: HIGH
+    impact: HIGH
+    likelihood: HIGH
+    cwe: "CWE-95"
+    owasp: "A03:2021 - Injection"
+
+  patterns:
+
+    - pattern-either:
+
+        - pattern: |
+            eval(...)
+
+        - pattern: |
+            new Function(...)
+
+        - pattern: |
+            setTimeout($X, ...)
+
+        - pattern: |
+            setInterval($X, ...)
+
+###############################################################
+# Rule 2 - Hardcoded JWT Secret
+###############################################################
+
+- id: hardcoded-jwt-secret
+
+  message: >
+    Hardcoded JWT Secret detected.
+    Store secrets inside environment variables or a Secret Manager.
+
+  severity: ERROR
+
+  languages:
+    - javascript
+    - typescript
+
+  metadata:
+    category: security
+    cwe: "CWE-798"
+    owasp: "A02:2021 - Cryptographic Failures"
+
+  patterns:
+
+    - pattern-either:
+
+        - pattern: |
+            jwt.sign(...,"...")
+
+        - pattern: |
+            jwt.verify(...,"...")
+
+        - pattern: |
+            jwt.sign(...,'...')
+
+        - pattern: |
+            jwt.verify(...,'...')
+
+###############################################################
+# Rule 3 - Insecure Express Session Secret
+###############################################################
+
+- id: insecure-session-secret
+
+  message: >
+    Express session uses a hardcoded secret.
+    Use process.env.SESSION_SECRET instead.
+
+  severity: ERROR
+
+  languages:
+    - javascript
+    - typescript
+
+  metadata:
+    category: security
+    cwe: "CWE-798"
+    owasp: "A02:2021"
+
+  pattern: |
+
+    session({
+
+      ...
+
+      secret: "...",
+
+      ...
+
+    })

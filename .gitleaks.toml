@@ -1,0 +1,40 @@
+title = "OWASP Juice Shop DevSecOps Configuration"
+
+##############################################################
+# Allowlist
+##############################################################
+
+[allowlist]
+
+description = "Allow test/demo secrets used for Semgrep demonstrations"
+
+paths = [
+    '''test/.*''',
+    '''docs/.*'''
+]
+
+##############################################################
+# Ignore Rules
+##############################################################
+
+regexes = [
+
+    # Ignore obvious placeholder values
+
+    '''changeme''',
+
+    '''example''',
+
+    '''dummy''',
+
+    '''test123''',
+
+    '''password123'''
+
+]
+
+##############################################################
+# Entropy
+##############################################################
+
+entropy = 3.5
