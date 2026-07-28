@@ -16,7 +16,7 @@ on:
 # Global Environment Variables
 ###########################################################
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: "24"
   IMAGE_NAME: juice-shop-secure
 
 ###########################################################
