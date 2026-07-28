@@ -15,53 +15,53 @@ on:
 ###########################################################
 # Global Environment Variables
 ###########################################################
-# env:
-#   NODE_VERSION: "24"
-#   IMAGE_NAME: juice-shop-secure
+env:
+  NODE_VERSION: "24"
+  IMAGE_NAME: juice-shop-secure
 
-# ###########################################################
-# # Job 1 - Build Application
-# ###########################################################
-# jobs:
+###########################################################
+# Job 1 - Build Application
+###########################################################
+jobs:
 
-#   build:
+  build:
 
-#     name: Build Application
+    name: Build Application
 
-#     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-#     steps:
+    steps:
 
-#       #####################################################
-#       # Checkout Repository
-#       #####################################################
+      #####################################################
+      # Checkout Repository
+      #####################################################
 
-#       - name: Checkout Source
-#         uses: actions/checkout@v4
+      - name: Checkout Source
+        uses: actions/checkout@v4
 
-#       #####################################################
-#       # Install Node
-#       #####################################################
+      #####################################################
+      # Install Node
+      #####################################################
 
-#       - name: Setup Node.js
-#         uses: actions/setup-node@v4
-#         with:
-#           node-version: ${{ env.NODE_VERSION }}
-#           # cache: npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          # cache: npm
 
-#       #####################################################
-#       # Install Dependencies
-#       #####################################################
+      #####################################################
+      # Install Dependencies
+      #####################################################
 
-#       - name: Install Dependencies
-#         run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-#       #####################################################
-#       # Build Application
-#       #####################################################
+      #####################################################
+      # Build Application
+      #####################################################
 
-#       - name: Build Juice Shop
-#         run: npm run build
+      - name: Build Juice Shop
+        run: npm run build
 
 ###########################################################
 # Job 2 - Secret Scanning
