@@ -235,10 +235,32 @@ jobs:
       - name: Build Docker Image
 
         run: |
-
           docker build \
-          -f Dockerfile.hardened \
-          -t $IMAGE_NAME:latest .
+            -f Dockerfile.hardened \
+            -t $IMAGE_NAME:latest .
+
+      #####################################################
+      # Save Docker Image
+      #####################################################
+
+      - name: Save Docker Image
+
+        run: |
+          docker save $IMAGE_NAME:latest -o juice-shop.tar
+
+      #####################################################
+      # Upload Docker Image
+      #####################################################
+
+      - name: Upload Docker Image
+
+        uses: actions/upload-artifact@v4
+
+        with:
+
+          name: docker-image
+
+          path: juice-shop.tar
 
 ###########################################################
 # Job 6 - Container Scan
