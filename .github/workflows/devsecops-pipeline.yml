@@ -267,63 +267,24 @@ jobs:
 ###########################################################
 
   container:
+  name: Container Security Scan
+  runs-on: ubuntu-latest
 
-    name: Container Security Scan
+  needs: docker
 
-    runs-on: ubuntu-latest
+  steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: docker-image
 
-    needs: docker
+    - name: Load Docker Image
+      run: docker load -i juice-shop.tar
 
-    steps:
-
-      #####################################################
-      # Download Docker Image
-      #####################################################
-
-      - name: Download Docker Image
-
-        uses: actions/download-artifact@v4
-
-        with:
-
-          name: docker-image
-
-      #####################################################
-      # Load Docker Image
-      #####################################################
-
-      - name: Load Docker Image
-
-        run: |
-
-          docker load -i juice-shop.tar
-
-      #####################################################
-      # Verify Image Exists
-      #####################################################
-
-      - name: List Images
-
-        run: |
-
-          docker images
-
-      #####################################################
-      # Scan Docker Image
-      #####################################################
-
-      - name: Scan Docker Image
-
-        uses: aquasecurity/trivy-action@master
-
-        with:
-
-          image-ref: juice-shop-secure:latest
-
-          severity: HIGH,CRITICAL
-
-          ignore-unfixed: true
-
-          exit-code: 0
-
-          format: table
+    - name: Scan Docker Image
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: juice-shop-secure:latest
+        severity: HIGH,CRITICAL
+        ignore-unfixed: true
+        exit-code: 0
+        format: table
