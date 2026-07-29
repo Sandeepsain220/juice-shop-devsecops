@@ -1,55 +1,37 @@
 ###############################################################
-# Stage 1 - Build Stage
+# Stage 1 - Build
 ###############################################################
+FROM node:24-alpine AS builder
 
-FROM node:20-alpine AS builder
-
-# Create application directory
 WORKDIR /app
 
-# Copy dependency files first for better layer caching
 COPY . .
 
-# Install only production dependencies
-RUN npm install --omit=dev
+RUN npm install
 
-# Copy application source
-COPY . .
-
-# Build application
 RUN npm run build
 
 ###############################################################
-# Stage 2 - Runtime Stage
+# Stage 2 - Runtime
 ###############################################################
+FROM node:24-alpine
 
-FROM node:20-alpine
-
-# Create application directory
 WORKDIR /app
 
-# Create non-root user (if not already present)
 RUN addgroup -S appgroup && \
     adduser -S appuser -G appgroup
 
-# Copy built application from builder stage
 COPY --from=builder /app /app
 
-# Ensure correct ownership
 RUN chown -R appuser:appgroup /app
 
-# Switch to non-root user
 USER appuser
 
-# Expose application port
-EXPOSE 3000
-
-# Environment variables
 ENV NODE_ENV=production
 
-# Health check
+EXPOSE 3000
+
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 
-# Start application
 CMD ["npm", "start"]
