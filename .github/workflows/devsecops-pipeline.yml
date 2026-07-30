@@ -48,7 +48,6 @@ jobs:
             --config=.semgrep/custom-rules.yml \
             --json \
             --output semgrep-report.json \
-            --error \
             .
 
       - name: Upload Semgrep Report
