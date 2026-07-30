@@ -43,4 +43,7 @@ jobs:
 
       - name: Run Semgrep
         run: |
-          semgrep scan --config=auto .
+          semgrep scan \
+            --config=auto \
+            --config=.semgrep/custom-rules.yml \
+            .

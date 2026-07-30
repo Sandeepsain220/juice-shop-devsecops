@@ -1,7 +1,50 @@
-- name: Run Semgrep
-  run: |
-    semgrep \
-      --config auto \
-      --config .semgrep/custom-rules.yml \
-      --error \
-      .
+rules:
+
+#
+# ============================================================
+# Rule 1
+# Detect usage of eval()
+# ============================================================
+#
+
+- id: custom.javascript.eval-detected
+
+  message: >
+    Avoid using eval().
+    Dynamic code execution can lead to Remote Code Execution.
+
+  severity: ERROR
+
+  languages:
+    - javascript
+    - typescript
+
+  pattern-either:
+
+    - pattern: eval(...)
+
+    - pattern: new Function(...)
+
+#
+# ============================================================
+# Rule 2
+# Detect hardcoded JWT Secret
+# ============================================================
+#
+
+- id: custom.jwt.hardcoded-secret
+
+  message: >
+    Hardcoded JWT Secret detected.
+    Store secrets in environment variables.
+
+  severity: ERROR
+
+  languages:
+    - javascript
+    - typescript
+
+  patterns:
+
+    - pattern: |
+        jwt.sign(..., "$SECRET", ...)
