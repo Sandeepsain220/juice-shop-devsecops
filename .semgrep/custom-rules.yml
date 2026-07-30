@@ -1,50 +1,110 @@
 rules:
 
+
 #
 # ============================================================
 # Rule 1
-# Detect usage of eval()
+# Detect Dangerous Dynamic Code Execution
 # ============================================================
 #
 
-- id: custom.javascript.eval-detected
+- id: custom.javascript.dynamic-code-execution
+
 
   message: >
-    Avoid using eval().
-    Dynamic code execution can lead to Remote Code Execution.
+
+    Dangerous dynamic code execution detected.
+
+    Avoid using eval() or new Function().
+
+    This can lead to Remote Code Execution.
+
 
   severity: ERROR
 
+
   languages:
+
     - javascript
+
     - typescript
+
+
+
+  metadata:
+
+    category: security
+
+    technology:
+
+      - javascript
+
+      - nodejs
+
+    impact: HIGH
+
+    security-severity: "9.0"
+
+
 
   pattern-either:
 
+
     - pattern: eval(...)
 
+
     - pattern: new Function(...)
+
+
+
 
 #
 # ============================================================
 # Rule 2
-# Detect hardcoded JWT Secret
+# Detect Hardcoded JWT Secret
 # ============================================================
 #
 
 - id: custom.jwt.hardcoded-secret
 
+
   message: >
-    Hardcoded JWT Secret detected.
-    Store secrets in environment variables.
+
+    Hardcoded JWT secret detected.
+
+    Store secrets securely using environment variables.
+
 
   severity: ERROR
 
+
   languages:
+
     - javascript
+
     - typescript
+
+
+
+  metadata:
+
+    category: security
+
+    technology:
+
+      - jwt
+
+      - nodejs
+
+    impact: HIGH
+
+    security-severity: "8.5"
+
+
 
   patterns:
 
+
     - pattern: |
-        jwt.sign(..., "$SECRET", ...)
+
+        jwt.sign($PAYLOAD, "$SECRET", ...)
