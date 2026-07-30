@@ -45,15 +45,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install semgrep
 
-      - name: Run Semgrep
+      - name: Run Semgrep (JSON)
         run: |
           semgrep scan \
             --config=auto \
             --config=.semgrep/custom-rules.yml \
             --json \
             --output semgrep-report.json \
+            .
+
+      - name: Run Semgrep (SARIF)
+        run: |
+          semgrep scan \
+            --config=auto \
+            --config=.semgrep/custom-rules.yml \
             --sarif \
-            --sarif-output semgrep.sarif \
+            --output semgrep.sarif \
             .
 
       - name: Upload Semgrep Reports
