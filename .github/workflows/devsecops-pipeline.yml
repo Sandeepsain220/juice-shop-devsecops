@@ -75,8 +75,6 @@ jobs:
 
       - name: Run Semgrep JSON Report
 
-        continue-on-error: true
-
         run: |
 
           semgrep scan \
@@ -94,8 +92,7 @@ jobs:
 
       - name: Run Semgrep SARIF Report
 
-        continue-on-error: true
-
+      
         run: |
 
           semgrep scan \
@@ -258,3 +255,37 @@ jobs:
 
 
           EOF
+
+  ############################################################
+# Job 2 - Secrets Scanning using Gitleaks
+############################################################
+
+
+  secrets-scan:
+
+
+    name: Secrets Scan - Gitleaks
+
+
+    runs-on: ubuntu-latest
+
+
+
+    steps:
+
+
+
+      - name: Checkout Source
+
+        uses: actions/checkout@v4
+
+
+
+      - name: Run Gitleaks
+
+
+        uses: gitleaks/gitleaks-action@v2
+
+        env:
+
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
