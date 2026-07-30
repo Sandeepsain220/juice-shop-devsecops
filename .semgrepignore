@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build folders
+build/
+coverage/
+
+# Git
+.git/
+
+# Logs
+logs/
+
+# Uploads
+uploads/
+
+# Generated Assets
+frontend/src/assets/private/
+
+# Reports
+*.sarif
+*.json
+
+# SBOM
+*.cdx.json
