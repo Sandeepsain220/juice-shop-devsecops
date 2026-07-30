@@ -11,6 +11,10 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   sast:
 
@@ -48,10 +52,21 @@ jobs:
             --config=.semgrep/custom-rules.yml \
             --json \
             --output semgrep-report.json \
+            --sarif \
+            --sarif-output semgrep.sarif \
             .
 
-      - name: Upload Semgrep Report
+      - name: Upload Semgrep Reports
         uses: actions/upload-artifact@v4
         with:
-          name: semgrep-report
-          path: semgrep-report.json
+          name: semgrep-reports
+          path: |
+            semgrep-report.json
+            semgrep.sarif
+
+      - name: Upload SARIF to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+
+      
