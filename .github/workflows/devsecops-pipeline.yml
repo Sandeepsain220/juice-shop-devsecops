@@ -295,86 +295,86 @@ jobs:
           ############################################################
   sca:
 
-  name: Software Composition Analysis
+    name: Software Composition Analysis
 
-  runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 
-  needs:
-    - sast
-    - secrets-scan
+    needs:
+      - sast
+      - secrets-scan
 
-  if: always()
+    if: always()
 
-  steps:
+    steps:
 
-    ###########################################################
-    # Checkout
-    ###########################################################
+      ###########################################################
+      # Checkout
+      ###########################################################
 
-    - name: Checkout Source
-      uses: actions/checkout@v4
+      - name: Checkout Source
+        uses: actions/checkout@v4
 
-    ###########################################################
-    # Generate SBOM
-    ###########################################################
+      ###########################################################
+      # Generate SBOM
+      ###########################################################
 
-    - name: Generate CycloneDX SBOM
-      uses: anchore/sbom-action@v0
-      with:
-        format: cyclonedx-json
-        output-file: sbom.json
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          format: cyclonedx-json
+          output-file: sbom.json
 
-    ###########################################################
-    # Upload SBOM
-    ###########################################################
+      ###########################################################
+      # Upload SBOM
+      ###########################################################
 
-    - name: Upload SBOM
-      uses: actions/upload-artifact@v4
-      with:
-        name: sbom
-        path: sbom.json
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
 
-    ###########################################################
-    # Run Trivy Dependency Scan
-    ###########################################################
+      ###########################################################
+      # Run Trivy Dependency Scan
+      ###########################################################
 
-    - name: Run Trivy Scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: fs
-        scan-ref: .
-        format: sarif
-        output: trivy-results.sarif
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
 
-    ###########################################################
-    # Upload Trivy Artifact
-    ###########################################################
+      ###########################################################
+      # Upload Trivy Artifact
+      ###########################################################
 
-    - name: Upload Trivy Report
-      uses: actions/upload-artifact@v4
-      with:
-        name: trivy-report
-        path: trivy-results.sarif
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report
+          path: trivy-results.sarif
 
-    ###########################################################
-    # Upload to GitHub Security
-    ###########################################################
+      ###########################################################
+      # Upload to GitHub Security
+      ###########################################################
 
-    - name: Upload Trivy SARIF
-      uses: github/codeql-action/upload-sarif@v3
-      with:
-        sarif_file: trivy-results.sarif
+      - name: Upload Trivy SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
 
-    ###########################################################
-    # Security Gate
-    ###########################################################
+      ###########################################################
+      # Security Gate
+      ###########################################################
 
-    - name: Security Gate
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: fs
-        scan-ref: .
-        severity: HIGH,CRITICAL
-        ignore-unfixed: true
-        format: table
-        exit-code: 1
+      - name: Security Gate
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table
+          exit-code: 1
