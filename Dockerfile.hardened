@@ -1,37 +1,56 @@
 ###############################################################
 # Stage 1 - Build
 ###############################################################
-FROM node:24-alpine AS builder
+FROM node:24.18-alpine AS builder
 
 WORKDIR /app
 
+# Copy application source
 COPY . .
 
-RUN npm install
+# Install production dependencies
+RUN npm install --omit=dev
 
+# Clean npm cache
+RUN npm cache clean --force
+
+# Build the application
 RUN npm run build
 
 ###############################################################
 # Stage 2 - Runtime
 ###############################################################
-FROM node:24-alpine
+FROM node:24.18-alpine
+
+# Metadata
+LABEL maintainer="Sandeep Sain"
+LABEL description="Hardened OWASP Juice Shop Docker Image"
+LABEL version="1.0"
 
 WORKDIR /app
 
+# Create a non-root user
 RUN addgroup -S appgroup && \
     adduser -S appuser -G appgroup
 
+# Copy application from builder stage
 COPY --from=builder /app /app
 
+# Set ownership
 RUN chown -R appuser:appgroup /app
 
+# Run as non-root user
 USER appuser
 
+# Production environment
 ENV NODE_ENV=production
 
+# Expose application port
 EXPOSE 3000
 
+# Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
 CMD wget --quiet --tries=1 --spider http://localhost:3000 || exit 1
 
+# Start the application
 CMD ["npm", "start"]
