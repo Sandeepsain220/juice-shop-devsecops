@@ -338,13 +338,16 @@ jobs:
       # Run Trivy Dependency Scan
       ###########################################################
 
-      - name: Run Trivy Scan
+      - name: Security Gate
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
           scan-ref: .
-          format: sarif
-          output: trivy-results.sarif
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          format: table
+          exit-code: 1
 
       ###########################################################
       # Upload Trivy Artifact
