@@ -257,35 +257,117 @@ jobs:
           EOF
 
   ############################################################
+############################################################
 # Job 2 - Secrets Scanning using Gitleaks
 ############################################################
 
+secrets-scan:
 
-  secrets-scan:
+  name: Secrets Scan - Gitleaks
+
+  runs-on: ubuntu-latest
+
+  steps:
+
+    - name: Checkout Source
+      uses: actions/checkout@v4
+
+    - name: Install Gitleaks
+      run: |
+        wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz
+        tar -xzf gitleaks_8.30.1_linux_x64.tar.gz
+        sudo mv gitleaks /usr/local/bin/
+
+    - name: Upload Gitleaks Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: gitleaks-report
+        path: gitleaks.sarif
 
 
-    name: Secrets Scan - Gitleaks
+        ############################################################
+# Job 3 - Software Composition Analysis (SCA)
+############################################################
 
+sca:
 
-    runs-on: ubuntu-latest
+  name: Software Composition Analysis
 
+  runs-on: ubuntu-latest
 
+  needs:
+    - sast
+    - secrets-scan
 
-    steps:
+  steps:
 
+    ###########################################################
+    # Checkout
+    ###########################################################
 
+    - name: Checkout Source
+      uses: actions/checkout@v4
 
-      - name: Checkout Source
+    ###########################################################
+    # Generate SBOM
+    ###########################################################
 
-        uses: actions/checkout@v4
+    - name: Generate CycloneDX SBOM
+      uses: anchore/sbom-action@v0
+      with:
+        format: cyclonedx-json
+        output-file: sbom.json
 
+    ###########################################################
+    # Upload SBOM
+    ###########################################################
 
+    - name: Upload SBOM
+      uses: actions/upload-artifact@v4
+      with:
+        name: sbom
+        path: sbom.json
 
-      - name: Run Gitleaks
+    ###########################################################
+    # Run Trivy Dependency Scan
+    ###########################################################
 
+    - name: Run Trivy Scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        format: sarif
+        output: trivy-results.sarif
 
-        uses: gitleaks/gitleaks-action@v2
+    ###########################################################
+    # Upload Trivy Artifact
+    ###########################################################
 
-        env:
+    - name: Upload Trivy Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy-report
+        path: trivy-results.sarif
 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    ###########################################################
+    # Upload to GitHub Security
+    ###########################################################
+
+    - name: Upload Trivy SARIF
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: trivy-results.sarif
+
+    ###########################################################
+    # Security Gate
+    ###########################################################
+
+    - name: Security Gate
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        severity: HIGH,CRITICAL
+        ignore-unfixed: true
+        exit-code: 1
