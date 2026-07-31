@@ -9,12 +9,10 @@ WORKDIR /app
 COPY . .
 
 # Install production dependencies
-RUN npm install --omit=dev
+RUN npm install
 
-# Clean npm cache
 RUN npm cache clean --force
 
-# Build the application
 RUN npm run build
 
 ###############################################################

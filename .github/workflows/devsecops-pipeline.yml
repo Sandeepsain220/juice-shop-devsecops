@@ -334,37 +334,37 @@ jobs:
           name: sbom
           path: sbom.json
 
-      ###########################################################
-      # Run Trivy Dependency Scan
+            ###########################################################
+      # Run Trivy Scan (Generate SARIF)
       ###########################################################
 
-      - name: Security Gate
+      - name: Run Trivy Scan
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
           scan-ref: .
           scanners: vuln
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          format: table
-          exit-code: 1
+          format: sarif
+          output: trivy-results.sarif
 
       ###########################################################
-      # Upload Trivy Artifact
+      # Upload Trivy Report
       ###########################################################
 
       - name: Upload Trivy Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: trivy-report
           path: trivy-results.sarif
 
       ###########################################################
-      # Upload to GitHub Security
+      # Upload SARIF to GitHub Security
       ###########################################################
 
       - name: Upload Trivy SARIF
-        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-results.sarif
 
@@ -377,6 +377,7 @@ jobs:
         with:
           scan-type: fs
           scan-ref: .
+          scanners: vuln
           severity: HIGH,CRITICAL
           ignore-unfixed: true
           format: table
