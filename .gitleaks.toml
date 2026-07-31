@@ -20,6 +20,7 @@ paths = [
 regexes = [
     '''changeme''',
     '''dummy''',
+    '''example''',
     '''test123''',
     '''password123'''
 ]
